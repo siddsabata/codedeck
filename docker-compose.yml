@@ -1,0 +1,113 @@
+services:
+  # Development service with hot reloading
+  codedeck-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Git repository - user's absolute path mapped to container
+      # Use conditional mounting to avoid errors when GIT_REPO_PATH is not set
+      - ${GIT_REPO_PATH:-./temp-git-repo}:/app/git-repo
+      # Database file - absolute project path
+      - ./prisma/dev.db:/app/prisma/dev.db
+      # Source code for hot reloading
+      - .:/app
+      # Exclude node_modules and build artifacts for performance
+      - /app/node_modules
+      - /app/.next
+      - /app/.git
+    environment:
+      # Override only the container path for GIT_REPO_PATH, keep other vars from env_file
+      - GIT_REPO_PATH=/app/git-repo
+      - NODE_ENV=development
+    env_file:
+      - .env
+    command: npm run dev
+    networks:
+      - codedeck-network
+
+  # Production service with optimized build
+  codedeck-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    volumes:
+      # Git repository - user's absolute path mapped to container
+      - ${GIT_REPO_PATH:-./temp-git-repo}:/app/git-repo
+      # Database file - absolute project path
+      - ./prisma/dev.db:/app/prisma/dev.db
+    environment:
+      # Override only the container path for GIT_REPO_PATH, keep other vars from env_file
+      - GIT_REPO_PATH=/app/git-repo
+      - NODE_ENV=production
+    env_file:
+      - .env
+    networks:
+      - codedeck-network
+    profiles:
+      - production
+
+  # Database management service (optional)
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./prisma/dev.db:/app/prisma/dev.db
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: npx prisma studio --browser none --port 5555 --hostname 0.0.0.0
+    networks:
+      - codedeck-network
+    profiles:
+      - studio
+
+  # Setup validation service
+  setup-check:
+    image: alpine:latest
+    volumes:
+      - ${GIT_REPO_PATH:-./temp-git-repo}:/check-git-repo
+      - .:/check-project
+    command: >
+      sh -c "
+        echo '🔍 Checking Docker setup...'
+        echo 'Git repo path (host): ${GIT_REPO_PATH:-NOT_SET}'
+        echo 'GitHub PAT: ${GITHUB_PAT:+SET}${GITHUB_PAT:-NOT_SET}'
+        if [ ! -d '/check-git-repo' ]; then
+          echo '❌ ERROR: Git repository path does not exist!'
+          echo 'Please create your Git repository at: ${GIT_REPO_PATH:-NOT_SET}'
+          exit 1
+        fi
+        if [ -z '${GITHUB_PAT:-}' ]; then
+          echo '⚠️  WARNING: GITHUB_PAT not set - Git operations will fail'
+        fi
+        if [ ! -f '/check-project/.env' ]; then
+          echo '⚠️  WARNING: .env not found'
+          echo 'Please copy .env.example to .env and configure it'
+        fi
+        echo '✅ Setup check completed'
+      "
+    environment:
+      - GIT_REPO_PATH=${GIT_REPO_PATH:-}
+      - GITHUB_PAT=${GITHUB_PAT:-}
+    env_file:
+      - .env
+    profiles:
+      - setup
+
+networks:
+  codedeck-network:
+    driver: bridge
+
+volumes:
+  # Named volumes for better performance
+  node_modules:
+  next_cache: 

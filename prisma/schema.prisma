@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Problem model - represents a LeetCode problem flashcard
+model Problem {
+  id           Int       @id @default(autoincrement())
+  name         String    // Name of the LeetCode problem
+  description  String    // Problem description/statement
+  trickSummary String?   // Editable trick summary (up to 50 words, enforced client-side)
+  notes        String?   // Personal notes about the problem
+  solved       Boolean   @default(false) // Whether the problem has been solved
+  createdAt    DateTime  @default(now()) // When the problem was added
+  updatedAt    DateTime  @updatedAt // Last time the problem was modified
+  attempts     Attempt[] // Related attempts for this problem
+
+  @@map("problems") // Table name in database
+}
+
+// Attempt model - represents a coding attempt with Git integration
+model Attempt {
+  id          Int      @id @default(autoincrement())
+  problemId   Int      // Foreign key to Problem
+  problem     Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  timestamp   DateTime @default(now()) // When the attempt was made
+  commitHash  String   // Git commit hash for this attempt
+  note        String?  // Optional note about this attempt
+  filePath    String   // Path to the Python code file for this attempt
+
+  @@map("attempts") // Table name in database
+} 

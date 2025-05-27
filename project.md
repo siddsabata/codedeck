@@ -1,4 +1,4 @@
-**LeetCode Flashcards App – Detailed Implementation Plan**
+**codedeck: LeetCode Flashcards App – Detailed Implementation Plan**
 
 ---
 
@@ -20,7 +20,7 @@ Main page lists all problems sorted by `solved` (unsolved first) and then by old
 ## 2. Tech Stack
 
 * **Front-end**: Next.js, React, Tailwind CSS, Framer Motion
-* **State & Data-fetching**: React Query (or SWR)
+* **State & Data-fetching**: SWR
 * **Back-end**: Next.js API Routes (Node.js)
 * **Database**: SQLite via Prisma ORM
 * **Git integration**: Node.js Git client (e.g. simple-git) using a PAT

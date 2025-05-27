@@ -1,0 +1,35 @@
+# Development Dockerfile for codedeck Next.js application
+FROM node:18-alpine
+
+# Install necessary packages for development
+RUN apk add --no-cache libc6-compat git
+
+WORKDIR /app
+
+# Copy package files for dependency installation
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Copy Prisma schema and generate client
+COPY prisma ./prisma
+RUN npx prisma generate
+
+# Create directories for mounted volumes with proper permissions
+RUN mkdir -p /app/git-repo && chmod 755 /app/git-repo
+RUN mkdir -p /app/prisma && chmod 755 /app/prisma
+
+# Copy the rest of the application code
+# Note: This will be overridden by volume mount in development
+COPY . .
+
+# Expose the development port
+EXPOSE 3000
+
+# Set environment variables for development
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Default command for development (can be overridden in docker-compose)
+CMD ["npm", "run", "dev"] 
