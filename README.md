@@ -7,6 +7,12 @@ A modern, personal web application for managing LeetCode problems as interactive
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-38B2AC?style=flat-square&logo=tailwind-css)
 
+## 🎬 Demo
+
+![codedeck Demo](demo.gif)
+
+*codedeck in action: Managing LeetCode problems as flashcards with automatic Git integration*
+
 ## 🚀 Quick Start
 
 ```bash
@@ -107,6 +113,74 @@ Perfect for developers who want to maintain a personal knowledge base of coding 
 - **ESLint** - Code linting
 - **react-hot-toast** - Toast notifications
 
+## 📜 Scripts Documentation
+
+CodeDeck includes several scripts to streamline setup, development, and maintenance. Here's what each script does:
+
+### 🚀 **User Scripts** (Run by developers)
+
+#### `docker-start.sh` (Primary startup script)
+- **Purpose**: Main entry point to start the CodeDeck application
+- **What it does**:
+  - Validates Docker is running and environment is configured
+  - Checks required `.env` variables (GitHub token, Git repo path, etc.)
+  - Offers to create Git repository if missing
+  - Automatically starts the application in development mode on port 3000
+  - Handles container cleanup and database initialization
+- **Usage**: `./docker-start.sh`
+- **When to use**: Every time you want to start CodeDeck
+
+#### `test-setup.sh` (Setup validation script)
+- **Purpose**: Tests your CodeDeck setup without starting the full application
+- **What it does**:
+  - Creates a temporary test database
+  - Validates Prisma schema creation and client generation
+  - Tests basic database connectivity
+  - Cleans up test files automatically
+- **Usage**: `./test-setup.sh`
+- **When to use**: 
+  - After initial installation to verify everything works
+  - When troubleshooting database or setup issues
+  - Before running the full application
+
+### ⚙️ **Internal Scripts** (Used by Docker containers)
+
+#### `scripts/init-db.sh` (Database initialization script)
+- **Purpose**: Handles database setup inside Docker containers
+- **What it does**:
+  - Creates database schema using Prisma migrations
+  - Handles both fresh installations and existing databases
+  - Manages database file permissions and Docker volume mounts
+  - Generates Prisma client for database access
+  - Resolves migration conflicts automatically
+- **Usage**: Automatically called by Docker during container startup
+- **When it runs**: Every time a Docker container starts
+- **Note**: You never run this script directly - Docker handles it
+
+### 🔧 **Script Permissions**
+
+For new installations, make sure user scripts are executable:
+
+```bash
+# Required after cloning the repository
+chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
+```
+
+**Why**: Git doesn't preserve executable permissions, so new clones need this step.
+
+### 🔄 **Script Workflow**
+
+**Typical development workflow**:
+1. **First time**: `chmod +x docker-start.sh test-setup.sh scripts/init-db.sh` (make scripts executable)
+2. **Optional**: `./test-setup.sh` (validate setup)
+3. **Daily use**: `./docker-start.sh` (start application)
+4. **Automatic**: `scripts/init-db.sh` (runs inside container)
+
+**Troubleshooting workflow**:
+1. `./test-setup.sh` (identify issues)
+2. Fix configuration issues
+3. `./docker-start.sh` (try starting again)
+
 ## 📋 Prerequisites
 
 Before installing CodeDeck, ensure you have:
@@ -165,6 +239,9 @@ git push -u origin main
 git clone https://github.com/siddsabata/codedeck.git
 cd codedeck
 
+# Make scripts executable (required for new installations)
+chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
+
 # Copy environment template
 cp .env.example .env
 ```
@@ -203,17 +280,13 @@ GIT_USER_EMAIL="your.email@example.com"
 The script will:
 - ✅ Validate your environment configuration
 - ✅ Check that your Git repository exists
-- ✅ **Ask if you want sample LeetCode problems** (recommended for first-time users)
 - ✅ **Automatically create and initialize database** with Prisma migrations
-- ✅ **Seed sample data** if requested (3 example problems: Two Sum, Valid Parentheses, Longest Substring)
-- ✅ Let you choose development or production mode
-- ✅ Start the application with the correct settings
-
-**Choose option 1 (Development)** for the best experience with hot reloading.
+- ✅ Start the application in development mode on port 3000
+- ✅ Begin with an empty database ready for your problems
 
 Wait for the startup to complete, then open [http://localhost:3000](http://localhost:3000)
 
-**🎉 That's it!** Your database is created automatically with proper schema and optional sample data.
+**🎉 That's it!** Your database is created automatically with proper schema and you can start adding your own problems.
 
 ### Daily Usage
 
@@ -237,14 +310,9 @@ cd codedeck
 
 **Automatic Setup**: The database is created automatically on first run using Prisma migrations.
 
-**Sample Data**: If you chose sample data during setup, you get 3 example problems:
-- **Two Sum** (marked as solved) - Classic hash map problem
-- **Valid Parentheses** (marked as solved) - Stack data structure example  
-- **Longest Substring** (unsolved) - Sliding window technique
-
 **Your Data**: All your problems, attempts, and progress are automatically saved and persist between sessions.
 
-**Fresh Start**: Delete your database file to start completely fresh, or just delete individual sample problems through the UI.
+**Fresh Start**: Delete your database file to start completely fresh, or delete individual problems through the UI.
 
 ### Stopping the Application
 
@@ -297,17 +365,6 @@ docker-compose up --build codedeck-dev
 **Database Issues**:
 - Database creation is **fully automatic** - no manual setup required
 - The database will be created automatically when you start the application
-- If you want sample problems, choose "Yes" when prompted during startup
-- Sample problems are only added to empty databases to avoid duplicates
-
-**"Database schema is not empty" Error**:
-- This is now handled automatically by the initialization script
-- The script will detect and resolve migration conflicts automatically
-
-**Sample Problems Not Showing**:
-- Sample problems are only added to completely empty databases
-- If you have existing problems, sample data won't be added to avoid duplicates
-- To get sample problems on an existing database, you can manually run: `npx prisma db seed`
 
 **"Git repository not found"**: 
 - The startup script will offer to create the repository for you
@@ -324,8 +381,8 @@ docker-compose up --build codedeck-dev
 
 **Script Permission Issues**:
 ```bash
-# If you get "permission denied" when running the script:
-chmod +x docker-start.sh
+# If you get "permission denied" when running startup scripts:
+chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
 ./docker-start.sh
 ```
 
@@ -337,9 +394,9 @@ chmod +x docker-start.sh
 
 **Fresh Installation**: If you're setting up on a new machine, simply:
 1. Clone the repo
-2. Copy and configure `.env`  
-3. Run `./docker-start.sh`
-4. Choose "Yes" for sample problems if you want example LeetCode problems
+2. Make scripts executable: `chmod +x docker-start.sh test-setup.sh scripts/init-db.sh`
+3. Copy and configure `.env`  
+4. Run `./docker-start.sh`
 5. Everything else is automatic!
 
 ## 📖 Usage
