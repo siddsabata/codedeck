@@ -1,4 +1,4 @@
-# CodeDeck - LeetCode Flashcards App
+# codedeck - LeetCode Flashcards App
 
 A modern, personal web application for managing LeetCode problems as interactive flashcards with integrated Git tracking for your coding attempts.
 
