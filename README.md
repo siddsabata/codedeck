@@ -7,11 +7,9 @@ A modern, personal web application for managing LeetCode problems as interactive
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-38B2AC?style=flat-square&logo=tailwind-css)
 
-## 🎬 Demo
-
-![codedeck Demo](demo.gif)
-
-*codedeck in action: Managing LeetCode problems as flashcards with automatic Git integration*
+<div align="center">
+  <img src="demo.gif" alt="codedeck Demo" />
+</div>
 
 ## 🚀 Quick Start
 
