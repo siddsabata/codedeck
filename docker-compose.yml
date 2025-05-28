@@ -19,7 +19,8 @@ services:
       - /app/.next
       - /app/.git
     environment:
-      # Override only the container path for GIT_REPO_PATH, keep other vars from env_file
+      # Override paths for container environment
+      - DATABASE_URL=file:/app/prisma/dev.db
       - GIT_REPO_PATH=/app/git-repo
       - NODE_ENV=development
     env_file:
@@ -41,7 +42,8 @@ services:
       # Database file - absolute project path
       - ./prisma/dev.db:/app/prisma/dev.db
     environment:
-      # Override only the container path for GIT_REPO_PATH, keep other vars from env_file
+      # Override paths for container environment
+      - DATABASE_URL=file:/app/prisma/dev.db
       - GIT_REPO_PATH=/app/git-repo
       - NODE_ENV=production
     env_file:
@@ -62,6 +64,9 @@ services:
       - ./prisma/dev.db:/app/prisma/dev.db
       - .:/app
       - /app/node_modules
+    environment:
+      # Override database path for container environment
+      - DATABASE_URL=file:/app/prisma/dev.db
     env_file:
       - .env
     command: npx prisma studio --browser none --port 5555 --hostname 0.0.0.0
