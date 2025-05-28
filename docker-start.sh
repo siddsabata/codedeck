@@ -95,8 +95,13 @@ if [ ! -d "$GIT_REPO_PATH" ]; then
 fi
 
 echo "✅ Environment validation passed!"
-echo "📦 Template database with sample problems ready to use"
+echo "📦 Database will be initialized with migrations on first run"
 echo ""
+
+# Ask about sample data
+read -p "Would you like to include sample LeetCode problems? (y/n): " -n 1 -r
+echo
+INCLUDE_SEED_DATA=$REPLY
 
 # Simple choice: development or production
 echo "Which mode would you like to run?"
@@ -110,12 +115,25 @@ case $REPLY in
     1)
         echo "🚀 Starting development mode..."
         echo "📱 App will be available at: http://localhost:3000"
-        echo "🎯 Sample problems included - you can delete them and add your own!"
+        echo "🗄️  Database will be created automatically with Prisma migrations"
+        if [[ $INCLUDE_SEED_DATA =~ ^[Yy]$ ]]; then
+            echo "🌱 Sample problems will be added on first run"
+            export SEED_DATABASE=true
+        else
+            echo "📝 Starting with empty database - you can add your own problems"
+            export SEED_DATABASE=false
+        fi
         docker-compose up --build codedeck-dev
         ;;
     2)
         echo "🚀 Starting production mode..."
         echo "📱 App will be available at: http://localhost:3001"
+        echo "🗄️  Database will be created automatically with Prisma migrations"
+        if [[ $INCLUDE_SEED_DATA =~ ^[Yy]$ ]]; then
+            export SEED_DATABASE=true
+        else
+            export SEED_DATABASE=false
+        fi
         docker-compose --profile production up --build codedeck-prod
         ;;
     *)

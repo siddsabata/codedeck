@@ -19,11 +19,13 @@ dist/
 .env.test.local
 .env.production.local
 
-# Database files (excluding template database)
-prisma/dev.db-journal
+# Database files (SQLite databases should not be in version control)
+*.db
 *.db-journal
 *.sqlite
 *.sqlite3
+prisma/*.db
+prisma/*.db-journal
 
 # Development and planning documents
 project.md

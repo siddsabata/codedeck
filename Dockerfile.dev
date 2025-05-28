@@ -16,7 +16,9 @@ RUN npm ci
 COPY prisma ./prisma
 RUN npx prisma generate
 
-# No entrypoint script needed - template database handles initialization
+# Create initialization script for proper database setup
+COPY scripts/init-db.sh /app/init-db.sh
+RUN chmod +x /app/init-db.sh
 
 # Create directories for mounted volumes with proper permissions
 RUN mkdir -p /app/git-repo && chmod 755 /app/git-repo
@@ -33,5 +35,5 @@ EXPOSE 3000
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Default command for development
-CMD ["npm", "run", "dev"] 
+# Default command runs database initialization then starts development server
+CMD ["/bin/sh", "-c", "/app/init-db.sh && npm run dev"] 
