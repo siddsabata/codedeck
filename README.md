@@ -26,21 +26,17 @@ cp env.example .env
 ./docker-start.sh
 ```
 
-The script will guide you through setup, create a fresh database with optional sample data, and start the application at [http://localhost:3000](http://localhost:3000)
-
-**✨ New Feature**: Database initialization is now **completely automatic**! No manual database setup required.
+The script will start the application at [http://localhost:3000](http://localhost:3000)
 
 ## 📋 Table of Contents
 
 - [Quick Start](#quick-start)
 - [Overview](#overview)
-- [Recent Improvements](#recent-improvements)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Project Structure](#project-structure)
 
 ## 🎯 Overview
 
@@ -53,21 +49,6 @@ CodeDeck transforms your LeetCode practice into an organized, trackable experien
 - **Review your approach** with editable trick summaries and notes
 
 Perfect for developers who want to maintain a personal knowledge base of coding problems and solutions.
-
-## 🆕 Recent Improvements
-
-**✨ Simplified Setup (Latest Update)**:
-- **🔧 Automatic Database Creation**: No manual database setup required - everything is handled automatically
-- **🌱 Optional Sample Data**: Get started immediately with 3 example LeetCode problems  
-- **📁 Proper Migrations**: Uses industry-standard Prisma migrations for reliable database schema
-- **🚀 One-Command Start**: Single `./docker-start.sh` command handles everything
-- **💾 Data Persistence**: Your progress automatically saves and survives container restarts
-
-**🎯 Key Benefits**:
-- **Zero Configuration**: Database setup is completely automatic
-- **Production Ready**: Follows database best practices with proper migrations
-- **User Friendly**: Sample data helps new users understand the app immediately
-- **Reliable**: No more database path issues or complex initialization scripts
 
 ## ✨ Features
 
@@ -110,74 +91,6 @@ Perfect for developers who want to maintain a personal knowledge base of coding 
 - **Docker & Docker Compose** - Containerized development
 - **ESLint** - Code linting
 - **react-hot-toast** - Toast notifications
-
-## 📜 Scripts Documentation
-
-CodeDeck includes several scripts to streamline setup, development, and maintenance. Here's what each script does:
-
-### 🚀 **User Scripts** (Run by developers)
-
-#### `docker-start.sh` (Primary startup script)
-- **Purpose**: Main entry point to start the CodeDeck application
-- **What it does**:
-  - Validates Docker is running and environment is configured
-  - Checks required `.env` variables (GitHub token, Git repo path, etc.)
-  - Offers to create Git repository if missing
-  - Automatically starts the application in development mode on port 3000
-  - Handles container cleanup and database initialization
-- **Usage**: `./docker-start.sh`
-- **When to use**: Every time you want to start CodeDeck
-
-#### `test-setup.sh` (Setup validation script)
-- **Purpose**: Tests your CodeDeck setup without starting the full application
-- **What it does**:
-  - Creates a temporary test database
-  - Validates Prisma schema creation and client generation
-  - Tests basic database connectivity
-  - Cleans up test files automatically
-- **Usage**: `./test-setup.sh`
-- **When to use**: 
-  - After initial installation to verify everything works
-  - When troubleshooting database or setup issues
-  - Before running the full application
-
-### ⚙️ **Internal Scripts** (Used by Docker containers)
-
-#### `scripts/init-db.sh` (Database initialization script)
-- **Purpose**: Handles database setup inside Docker containers
-- **What it does**:
-  - Creates database schema using Prisma migrations
-  - Handles both fresh installations and existing databases
-  - Manages database file permissions and Docker volume mounts
-  - Generates Prisma client for database access
-  - Resolves migration conflicts automatically
-- **Usage**: Automatically called by Docker during container startup
-- **When it runs**: Every time a Docker container starts
-- **Note**: You never run this script directly - Docker handles it
-
-### 🔧 **Script Permissions**
-
-For new installations, make sure user scripts are executable:
-
-```bash
-# Required after cloning the repository
-chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
-```
-
-**Why**: Git doesn't preserve executable permissions, so new clones need this step.
-
-### 🔄 **Script Workflow**
-
-**Typical development workflow**:
-1. **First time**: `chmod +x docker-start.sh test-setup.sh scripts/init-db.sh` (make scripts executable)
-2. **Optional**: `./test-setup.sh` (validate setup)
-3. **Daily use**: `./docker-start.sh` (start application)
-4. **Automatic**: `scripts/init-db.sh` (runs inside container)
-
-**Troubleshooting workflow**:
-1. `./test-setup.sh` (identify issues)
-2. Fix configuration issues
-3. `./docker-start.sh` (try starting again)
 
 ## 📋 Prerequisites
 
@@ -326,26 +239,9 @@ docker-compose down
 
 The application will shut down gracefully and your data will be preserved.
 
-### Alternative: Manual Docker Commands
-
-If you prefer to use Docker commands directly instead of the startup script:
-
-```bash
-# Development mode
-docker-compose up codedeck-dev
-
-# Production mode  
-docker-compose --profile production up codedeck-prod
-
-# With build (if you've made changes)
-docker-compose up --build codedeck-dev
-```
-
-**Note**: The startup script (`./docker-start.sh`) is recommended as it validates your environment and provides helpful guidance.
-
 ### How It Works
 
-1. **You solve a LeetCode problem** on leetcode.com
+1. **You solve a LeetCode-style problem**
 2. **You create a problem card** in CodeDeck with the problem details
 3. **You add an attempt** by pasting your Python solution
 4. **CodeDeck automatically**:
@@ -376,13 +272,6 @@ docker-compose up --build codedeck-dev
 **"Permission denied"**: 
 - Make sure Docker can access your attempts repository directory
 - On macOS/Linux, the path should be under your home directory
-
-**Script Permission Issues**:
-```bash
-# If you get "permission denied" when running startup scripts:
-chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
-./docker-start.sh
-```
 
 **Testing Your Setup**:
 ```bash
@@ -422,50 +311,6 @@ chmod +x docker-start.sh test-setup.sh scripts/init-db.sh
    - Click "View Code" on any attempt to see your solution
    - Copy code to clipboard with one click
    - View historical versions of your solutions
-
-### Key Workflows
-
-**📝 Problem Creation:**
-```
-Main Page → Add Problem → Fill Form → Save
-```
-
-**💻 Adding Code Attempts:**
-```
-Problem Detail → Add Attempt → Paste Code → Add Notes → Save
-```
-
-**✏️ Editing Problem Info:**
-```
-Problem Detail → Click to Edit → Make Changes → Save/Cancel
-```
-
-**✅ Marking as Solved:**
-```
-Problem Detail → Click Solved Toggle → Status Updates
-```
-
-## 🏗 Project Structure
-
-CodeDeck is built with a clean, modular architecture:
-
-```
-codedeck/
-├── components/          # React UI components
-├── hooks/              # Custom data fetching hooks
-├── lib/                # Core utilities (Git, database, types)
-├── pages/              # Next.js pages and API routes
-├── prisma/             # Database schema and migrations
-├── styles/             # Global styles
-└── Docker files        # Development environment
-```
-
-**Key Technologies:**
-- **Full-stack TypeScript** for type safety
-- **Prisma ORM** with SQLite for data persistence
-- **SWR** for efficient data fetching and caching
-- **Docker** for consistent development environment
-- **Git integration** for automatic code tracking
 
 ## 🙏 Acknowledgments
 
