@@ -7,8 +7,26 @@ A modern, personal web application for managing LeetCode problems as interactive
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-38B2AC?style=flat-square&logo=tailwind-css)
 
+## 🚀 Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/siddsabata/codedeck.git
+cd codedeck
+
+# 2. Copy and configure environment
+cp .env.example .env
+# Edit .env with your GitHub token and Git repository path
+
+# 3. Run the startup script
+./docker-start.sh
+```
+
+The script will guide you through the setup and start the application at [http://localhost:3000](http://localhost:3000)
+
 ## 📋 Table of Contents
 
+- [Quick Start](#quick-start)
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -159,9 +177,17 @@ GIT_USER_EMAIL="your.email@example.com"
 #### Step 5: Start CodeDeck
 
 ```bash
-# Start the application (first time will download Docker images)
-docker-compose up codedeck-dev
+# Run the startup script (handles everything automatically)
+./docker-start.sh
 ```
+
+The script will:
+- ✅ Validate your environment configuration
+- ✅ Check that your Git repository exists
+- ✅ Let you choose development or production mode
+- ✅ Start the application with the correct settings
+
+**Choose option 1 (Development)** for the best experience with hot reloading.
 
 Wait for the startup to complete, then open [http://localhost:3000](http://localhost:3000)
 
@@ -173,11 +199,12 @@ After the first-time setup, starting CodeDeck is simple:
 # Navigate to CodeDeck directory
 cd codedeck
 
-# Start the application
-docker-compose up codedeck-dev
+# Run the startup script
+./docker-start.sh
 ```
 
-**That's it!** The application will:
+**That's it!** The script will:
+- ✅ Validate your environment is still configured correctly
 - ✅ Start the web interface at http://localhost:3000
 - ✅ Connect to your attempts repository
 - ✅ Be ready to track your LeetCode solutions
@@ -196,6 +223,23 @@ docker-compose down
 
 The application will shut down gracefully and your data will be preserved.
 
+### Alternative: Manual Docker Commands
+
+If you prefer to use Docker commands directly instead of the startup script:
+
+```bash
+# Development mode
+docker-compose up codedeck-dev
+
+# Production mode  
+docker-compose --profile production up codedeck-prod
+
+# With build (if you've made changes)
+docker-compose up --build codedeck-dev
+```
+
+**Note**: The startup script (`./docker-start.sh`) is recommended as it validates your environment and provides helpful guidance.
+
 ### How It Works
 
 1. **You solve a LeetCode problem** on leetcode.com
@@ -209,7 +253,12 @@ The application will shut down gracefully and your data will be preserved.
 
 ### Troubleshooting
 
+**Environment Issues**:
+- Run `./docker-start.sh` - it will validate your configuration and guide you through fixes
+- The script checks for common issues like missing `.env`, invalid paths, and placeholder values
+
 **"Git repository not found"**: 
+- The startup script will offer to create the repository for you
 - Verify `GIT_REPO_PATH` is the absolute path to your attempts repository
 - Make sure the directory exists and is a Git repository (`git status` should work)
 
@@ -220,6 +269,13 @@ The application will shut down gracefully and your data will be preserved.
 **"Permission denied"**: 
 - Make sure Docker can access your attempts repository directory
 - On macOS/Linux, the path should be under your home directory
+
+**Script Permission Issues**:
+```bash
+# If you get "permission denied" when running the script:
+chmod +x docker-start.sh
+./docker-start.sh
+```
 
 For detailed Docker troubleshooting, see [README-DOCKER.md](README-DOCKER.md).
 

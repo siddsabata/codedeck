@@ -25,10 +25,6 @@ prisma/dev.db-journal
 *.sqlite
 *.sqlite3
 
-# Exclude all .db files except our template database
-*.db
-!prisma/prisma/dev.db
-
 # Development and planning documents
 project.md
 todo.md
