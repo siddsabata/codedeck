@@ -40,7 +40,7 @@ The script will start the application at [http://localhost:3000](http://localhos
 
 ## 🎯 Overview
 
-CodeDeck transforms your LeetCode practice into an organized, trackable experience. Instead of losing track of problems you've worked on, CodeDeck lets you:
+codedeck transforms your LeetCode practice into an organized, trackable experience. Instead of losing track of problems you've worked on, codedeck lets you:
 
 - **Organize problems as flashcards** with descriptions, tricks, and personal notes
 - **Track your coding attempts** with automatic Git integration
@@ -94,7 +94,7 @@ Perfect for developers who want to maintain a personal knowledge base of coding 
 
 ## 📋 Prerequisites
 
-Before installing CodeDeck, ensure you have:
+Before installing codedeck, ensure you have:
 
 1. **Docker and Docker Compose** installed on your system
 2. **Git** installed and configured
@@ -105,7 +105,7 @@ Before installing CodeDeck, ensure you have:
 
 ### First-Time Setup
 
-CodeDeck requires a **separate Git repository** to store your LeetCode attempt files. This is where your Python solutions will be automatically committed and tracked.
+codedeck requires a **separate Git repository** to store your LeetCode attempt files. This is where your Python solutions will be automatically committed and tracked.
 
 #### Step 1: Prepare Your Attempts Repository
 
@@ -130,23 +130,23 @@ git push -u origin main
 ```
 
 **Important**: 
-- This repository is **separate** from the CodeDeck application
-- CodeDeck will create files like `attempts/problem-1/attempt.py` in this repository
+- This repository is **separate** from the codedeck application
+- codedeck will create files like `attempts/problem-1/attempt.py` in this repository
 - Each attempt gets automatically committed and pushed to this repository
 
 #### Step 2: Get GitHub Personal Access Token
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. Click "Generate new token (classic)"
-3. Give it a name like "CodeDeck Access"
+3. Give it a name like "codedeck Access"
 4. Select scopes: `repo` (Full control of private repositories)
 5. Click "Generate token"
 6. **Copy the token** - you'll need it in the next step
 
-#### Step 3: Install CodeDeck
+#### Step 3: Install codedeck
 
 ```bash
-# Clone CodeDeck application
+# Clone codedeck application
 git clone https://github.com/siddsabata/codedeck.git
 cd codedeck
 
@@ -181,7 +181,7 @@ GIT_USER_EMAIL="your.email@example.com"
 - `GIT_REPO_PATH` must be the **absolute path** to your attempts repository
 - Use the full path like `/Users/yourusername/my-leetcode-attempts` (not relative paths)
 
-#### Step 5: Start CodeDeck
+#### Step 5: Start codedeck
 
 ```bash
 # Run the startup script (handles everything automatically)
@@ -201,10 +201,10 @@ Wait for the startup to complete, then open [http://localhost:3000](http://local
 
 ### Daily Usage
 
-After the first-time setup, starting CodeDeck is simple:
+After the first-time setup, starting codedeck is simple:
 
 ```bash
-# Navigate to CodeDeck directory
+# Navigate to codedeck directory
 cd codedeck
 
 # Run the startup script
@@ -227,7 +227,7 @@ cd codedeck
 
 ### Stopping the Application
 
-To stop CodeDeck when you're done:
+To stop codedeck when you're done:
 
 ```bash
 # If running in foreground (you see logs), press:
@@ -242,9 +242,9 @@ The application will shut down gracefully and your data will be preserved.
 ### How It Works
 
 1. **You solve a LeetCode-style problem**
-2. **You create a problem card** in CodeDeck with the problem details
+2. **You create a problem card** in codedeck with the problem details
 3. **You add an attempt** by pasting your Python solution
-4. **CodeDeck automatically**:
+4. **codedeck automatically**:
    - Creates `attempts/problem-X/attempt.py` in your attempts repository
    - Commits the file with a descriptive message
    - Pushes to your GitHub repository
