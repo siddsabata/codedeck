@@ -294,6 +294,21 @@ docker-compose up --build codedeck-dev
 - Run `./docker-start.sh` - it will validate your configuration and guide you through fixes
 - The script checks for common issues like missing `.env`, invalid paths, and placeholder values
 
+**Database Issues**:
+- Database creation is **fully automatic** - no manual setup required
+- The database will be created automatically when you start the application
+- If you want sample problems, choose "Yes" when prompted during startup
+- Sample problems are only added to empty databases to avoid duplicates
+
+**"Database schema is not empty" Error**:
+- This is now handled automatically by the initialization script
+- The script will detect and resolve migration conflicts automatically
+
+**Sample Problems Not Showing**:
+- Sample problems are only added to completely empty databases
+- If you have existing problems, sample data won't be added to avoid duplicates
+- To get sample problems on an existing database, you can manually run: `npx prisma db seed`
+
 **"Git repository not found"**: 
 - The startup script will offer to create the repository for you
 - Verify `GIT_REPO_PATH` is the absolute path to your attempts repository
@@ -307,12 +322,6 @@ docker-compose up --build codedeck-dev
 - Make sure Docker can access your attempts repository directory
 - On macOS/Linux, the path should be under your home directory
 
-**Database Issues**:
-- Database creation is **fully automatic** - no manual setup required
-- If you encounter database problems, delete `prisma/dev.db` and restart the app
-- The startup script will recreate a fresh database with proper schema
-- Choose "Yes" for sample data if you want example problems to get started
-
 **Script Permission Issues**:
 ```bash
 # If you get "permission denied" when running the script:
@@ -320,11 +329,18 @@ chmod +x docker-start.sh
 ./docker-start.sh
 ```
 
+**Testing Your Setup**:
+```bash
+# Run this to test your setup without starting the full app:
+./test-setup.sh
+```
+
 **Fresh Installation**: If you're setting up on a new machine, simply:
 1. Clone the repo
 2. Copy and configure `.env`  
 3. Run `./docker-start.sh`
-4. Everything else is automatic!
+4. Choose "Yes" for sample problems if you want example LeetCode problems
+5. Everything else is automatic!
 
 ## 📖 Usage
 

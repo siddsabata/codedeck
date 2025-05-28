@@ -12,6 +12,15 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database with sample LeetCode problems...')
 
+  // Check if problems already exist to avoid duplicates
+  const existingProblems = await prisma.problem.count()
+  
+  if (existingProblems > 0) {
+    console.log(`📝 Database already has ${existingProblems} problems, skipping seed`)
+    console.log('ℹ️  To re-seed, delete existing problems first')
+    return
+  }
+
   // Sample Problem 1: Two Sum (Solved)
   const twoSum = await prisma.problem.create({
     data: {

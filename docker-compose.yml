@@ -10,8 +10,8 @@ services:
       # Git repository - user's absolute path mapped to container
       # Use conditional mounting to avoid errors when GIT_REPO_PATH is not set
       - ${GIT_REPO_PATH:-./temp-git-repo}:/app/git-repo
-      # Database file - absolute project path
-      - ./prisma/dev.db:/app/prisma/dev.db
+      # Prisma directory - mount entire directory to avoid file creation issues
+      - ./prisma:/app/prisma
       # Source code for hot reloading
       - .:/app
       # Exclude node_modules and build artifacts for performance
@@ -25,7 +25,6 @@ services:
       - NODE_ENV=development
     env_file:
       - .env
-    command: npm run dev
     networks:
       - codedeck-network
 
@@ -39,8 +38,8 @@ services:
     volumes:
       # Git repository - user's absolute path mapped to container
       - ${GIT_REPO_PATH:-./temp-git-repo}:/app/git-repo
-      # Database file - absolute project path
-      - ./prisma/dev.db:/app/prisma/dev.db
+      # Prisma directory - mount entire directory to avoid file creation issues
+      - ./prisma:/app/prisma
     environment:
       # Override paths for container environment
       - DATABASE_URL=file:/app/prisma/dev.db
@@ -61,7 +60,7 @@ services:
     ports:
       - "5555:5555"
     volumes:
-      - ./prisma/dev.db:/app/prisma/dev.db
+      - ./prisma:/app/prisma
       - .:/app
       - /app/node_modules
     environment:

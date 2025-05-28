@@ -95,49 +95,17 @@ if [ ! -d "$GIT_REPO_PATH" ]; then
 fi
 
 echo "✅ Environment validation passed!"
-echo "📦 Database will be initialized with migrations on first run"
+echo "📦 Database will be initialized automatically on first run"
 echo ""
 
-# Ask about sample data
-read -p "Would you like to include sample LeetCode problems? (y/n): " -n 1 -r
-echo
-INCLUDE_SEED_DATA=$REPLY
+# Clean up any existing containers to avoid conflicts
+echo "🧹 Cleaning up any existing containers..."
+docker-compose down > /dev/null 2>&1 || true
 
-# Simple choice: development or production
-echo "Which mode would you like to run?"
-echo "1) Development (recommended) - Port 3000 with hot reloading"
-echo "2) Production - Port 3001 optimized build"
+echo "🚀 Starting codedeck in development mode..."
+echo "📱 App will be available at: http://localhost:3000"
+echo "🗄️  Database will be created automatically with Prisma migrations"
+echo "📝 Starting with empty database - you can add your own problems"
 echo ""
-read -p "Enter your choice (1-2): " -n 1 -r
-echo
-
-case $REPLY in
-    1)
-        echo "🚀 Starting development mode..."
-        echo "📱 App will be available at: http://localhost:3000"
-        echo "🗄️  Database will be created automatically with Prisma migrations"
-        if [[ $INCLUDE_SEED_DATA =~ ^[Yy]$ ]]; then
-            echo "🌱 Sample problems will be added on first run"
-            export SEED_DATABASE=true
-        else
-            echo "📝 Starting with empty database - you can add your own problems"
-            export SEED_DATABASE=false
-        fi
-        docker-compose up --build codedeck-dev
-        ;;
-    2)
-        echo "🚀 Starting production mode..."
-        echo "📱 App will be available at: http://localhost:3001"
-        echo "🗄️  Database will be created automatically with Prisma migrations"
-        if [[ $INCLUDE_SEED_DATA =~ ^[Yy]$ ]]; then
-            export SEED_DATABASE=true
-        else
-            export SEED_DATABASE=false
-        fi
-        docker-compose --profile production up --build codedeck-prod
-        ;;
-    *)
-        echo "❌ Invalid choice. Please run the script again."
-        exit 1
-        ;;
-esac 
+echo "⏳ Starting containers... (this may take a moment)"
+docker-compose up --build codedeck-dev 

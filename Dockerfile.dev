@@ -17,8 +17,9 @@ COPY prisma ./prisma
 RUN npx prisma generate
 
 # Create initialization script for proper database setup
-COPY scripts/init-db.sh /app/init-db.sh
-RUN chmod +x /app/init-db.sh
+# Place it outside /app to avoid volume mount override
+COPY scripts/init-db.sh /usr/local/bin/init-db.sh
+RUN chmod +x /usr/local/bin/init-db.sh
 
 # Create directories for mounted volumes with proper permissions
 RUN mkdir -p /app/git-repo && chmod 755 /app/git-repo
@@ -36,4 +37,5 @@ ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Default command runs database initialization then starts development server
-CMD ["/bin/sh", "-c", "/app/init-db.sh && npm run dev"] 
+# Add a small delay to ensure volume mounts are ready
+CMD ["/bin/sh", "-c", "sleep 3 && /usr/local/bin/init-db.sh && npm run dev"] 
