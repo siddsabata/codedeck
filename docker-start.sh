@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # codedeck Docker Startup Script
-# This script helps you start the codedeck application with Docker
+# Simple script to help you start the codedeck application with Docker
 
 set -e  # Exit on any error
 
@@ -14,49 +14,62 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check if .env.docker exists
-if [ ! -f ".env.docker" ]; then
-    echo "⚠️  .env.docker not found!"
+# Check if .env exists
+if [ ! -f ".env" ]; then
+    echo "⚠️  .env file not found!"
     echo ""
-    echo "Please create .env.docker from the example:"
-    echo "  cp env.docker.example .env.docker"
-    echo "  # Then edit .env.docker with your actual values"
+    echo "Please create .env from the example:"
+    echo "  cp .env.example .env"
+    echo "  # Then edit .env with your actual values"
     echo ""
-    echo "Required variables (without quotes):"
+    echo "Required variables:"
     echo "  - GITHUB_PAT: Your GitHub Personal Access Token"
     echo "  - GIT_REPO_PATH: Absolute path to your LeetCode Git repository"
+    echo "  - GIT_USER_NAME: Your name for Git commits"
+    echo "  - GIT_USER_EMAIL: Your email for Git commits"
     echo ""
     read -p "Do you want me to copy the example file now? (y/n): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        cp env.docker.example .env.docker
-        echo "✅ Created .env.docker from example"
-        echo "📝 Please edit .env.docker with your actual values before continuing"
-        echo "🚨 IMPORTANT: Remove quotes from values in .env.docker (Docker requirement)"
+        cp .env.example .env
+        echo "✅ Created .env from example"
+        echo "📝 Please edit .env with your actual values before continuing"
         exit 0
     else
-        echo "Please create .env.docker manually and run this script again"
+        echo "Please create .env manually and run this script again"
         exit 1
     fi
 fi
 
 # Source environment variables for validation
 set -a  # Export all variables
-source .env.docker
+source .env
 set +a
 
 # Validate required environment variables
 echo "🔍 Validating environment..."
 
-if [ -z "$GITHUB_PAT" ] || [ "$GITHUB_PAT" = "ghp_your_github_personal_access_token_here" ]; then
+if [ -z "$GITHUB_PAT" ] || [ "$GITHUB_PAT" = "your PAT" ]; then
     echo "❌ GITHUB_PAT is not set or using example value"
-    echo "Please update GITHUB_PAT in .env.docker with your actual GitHub token"
+    echo "Please update GITHUB_PAT in .env with your actual GitHub token"
     exit 1
 fi
 
-if [ -z "$GIT_REPO_PATH" ] || [ "$GIT_REPO_PATH" = "/Users/yourusername/dev/my-leetcode-repo" ]; then
+if [ -z "$GIT_REPO_PATH" ] || [ "$GIT_REPO_PATH" = "/absolute/path/to/your/problems/repo" ]; then
     echo "❌ GIT_REPO_PATH is not set or using example value"
-    echo "Please update GIT_REPO_PATH in .env.docker with your actual Git repository path"
+    echo "Please update GIT_REPO_PATH in .env with your actual Git repository path"
+    exit 1
+fi
+
+if [ -z "$GIT_USER_NAME" ] || [ "$GIT_USER_NAME" = "your name" ]; then
+    echo "❌ GIT_USER_NAME is not set or using example value"
+    echo "Please update GIT_USER_NAME in .env"
+    exit 1
+fi
+
+if [ -z "$GIT_USER_EMAIL" ] || [ "$GIT_USER_EMAIL" = "your email" ]; then
+    echo "❌ GIT_USER_EMAIL is not set or using example value"
+    echo "Please update GIT_USER_EMAIL in .env"
     exit 1
 fi
 
@@ -81,40 +94,29 @@ if [ ! -d "$GIT_REPO_PATH" ]; then
     fi
 fi
 
-# Check if database exists, create if not
-if [ ! -f "./prisma/dev.db" ]; then
-    echo "📦 Database not found, will be created on first run"
-fi
-
 echo "✅ Environment validation passed!"
+echo "📦 Template database with sample problems ready to use"
 echo ""
 
-# Ask user which mode to run
+# Simple choice: development or production
 echo "Which mode would you like to run?"
 echo "1) Development (recommended) - Port 3000 with hot reloading"
 echo "2) Production - Port 3001 optimized build"
-echo "3) Database Studio - Port 5555 for database management"
-echo "4) Run setup check only"
 echo ""
-read -p "Enter your choice (1-4): " -n 1 -r
+read -p "Enter your choice (1-2): " -n 1 -r
 echo
 
 case $REPLY in
     1)
         echo "🚀 Starting development mode..."
+        echo "📱 App will be available at: http://localhost:3000"
+        echo "🎯 Sample problems included - you can delete them and add your own!"
         docker-compose up --build codedeck-dev
         ;;
     2)
         echo "🚀 Starting production mode..."
+        echo "📱 App will be available at: http://localhost:3001"
         docker-compose --profile production up --build codedeck-prod
-        ;;
-    3)
-        echo "🚀 Starting Prisma Studio..."
-        docker-compose --profile studio up --build prisma-studio
-        ;;
-    4)
-        echo "🔍 Running setup check..."
-        docker-compose --profile setup up setup-check
         ;;
     *)
         echo "❌ Invalid choice. Please run the script again."

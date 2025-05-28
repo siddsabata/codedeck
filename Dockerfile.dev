@@ -16,9 +16,7 @@ RUN npm ci
 COPY prisma ./prisma
 RUN npx prisma generate
 
-# Copy and setup entrypoint script
-COPY docker-entrypoint.sh /app/
-RUN chmod +x /app/docker-entrypoint.sh
+# No entrypoint script needed - template database handles initialization
 
 # Create directories for mounted volumes with proper permissions
 RUN mkdir -p /app/git-repo && chmod 755 /app/git-repo
@@ -35,8 +33,5 @@ EXPOSE 3000
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Use entrypoint script to handle database initialization
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
-
-# Default command for development (can be overridden in docker-compose)
+# Default command for development
 CMD ["npm", "run", "dev"] 

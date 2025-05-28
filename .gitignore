@@ -18,15 +18,16 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
-.env.docker
 
-# Database files
-prisma/dev.db
+# Database files (excluding template database)
 prisma/dev.db-journal
-*.db
 *.db-journal
 *.sqlite
 *.sqlite3
+
+# Exclude all .db files except our template database
+*.db
+!prisma/prisma/dev.db
 
 # Development and planning documents
 project.md
@@ -120,9 +121,6 @@ docker-compose.override.yml
 
 # Vercel
 .vercel
-
-# Prisma
-prisma/migrations/dev.db*
 
 # Local development files
 *.local
