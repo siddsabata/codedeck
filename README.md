@@ -15,19 +15,22 @@ git clone https://github.com/siddsabata/codedeck.git
 cd codedeck
 
 # 2. Copy and configure environment
-cp .env.example .env
+cp env.example .env
 # Edit .env with your GitHub token and Git repository path
 
-# 3. Run the startup script
+# 3. Run the startup script (handles database setup automatically)
 ./docker-start.sh
 ```
 
-The script will guide you through the setup and start the application at [http://localhost:3000](http://localhost:3000)
+The script will guide you through setup, create a fresh database with optional sample data, and start the application at [http://localhost:3000](http://localhost:3000)
+
+**✨ New Feature**: Database initialization is now **completely automatic**! No manual database setup required.
 
 ## 📋 Table of Contents
 
 - [Quick Start](#quick-start)
 - [Overview](#overview)
+- [Recent Improvements](#recent-improvements)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -46,6 +49,21 @@ CodeDeck transforms your LeetCode practice into an organized, trackable experien
 - **Review your approach** with editable trick summaries and notes
 
 Perfect for developers who want to maintain a personal knowledge base of coding problems and solutions.
+
+## 🆕 Recent Improvements
+
+**✨ Simplified Setup (Latest Update)**:
+- **🔧 Automatic Database Creation**: No manual database setup required - everything is handled automatically
+- **🌱 Optional Sample Data**: Get started immediately with 3 example LeetCode problems  
+- **📁 Proper Migrations**: Uses industry-standard Prisma migrations for reliable database schema
+- **🚀 One-Command Start**: Single `./docker-start.sh` command handles everything
+- **💾 Data Persistence**: Your progress automatically saves and survives container restarts
+
+**🎯 Key Benefits**:
+- **Zero Configuration**: Database setup is completely automatic
+- **Production Ready**: Follows database best practices with proper migrations
+- **User Friendly**: Sample data helps new users understand the app immediately
+- **Reliable**: No more database path issues or complex initialization scripts
 
 ## ✨ Features
 
@@ -156,8 +174,8 @@ cp .env.example .env
 Edit `.env` with your actual values:
 
 ```bash
-# Database (leave as-is)
-DATABASE_URL="file:./prisma/dev.db"
+# Database (for Docker - uses absolute container path)
+DATABASE_URL="file:/app/prisma/dev.db"
 
 # Your GitHub Personal Access Token (from Step 2)
 GITHUB_PAT="ghp_your_actual_token_here"
@@ -171,6 +189,7 @@ GIT_USER_EMAIL="your.email@example.com"
 ```
 
 **Critical**: 
+- `DATABASE_URL` uses Docker container path format (automatically handled)
 - `GIT_REPO_PATH` must be the **absolute path** to your attempts repository
 - Use the full path like `/Users/yourusername/my-leetcode-attempts` (not relative paths)
 
@@ -184,12 +203,17 @@ GIT_USER_EMAIL="your.email@example.com"
 The script will:
 - ✅ Validate your environment configuration
 - ✅ Check that your Git repository exists
+- ✅ **Ask if you want sample LeetCode problems** (recommended for first-time users)
+- ✅ **Automatically create and initialize database** with Prisma migrations
+- ✅ **Seed sample data** if requested (3 example problems: Two Sum, Valid Parentheses, Longest Substring)
 - ✅ Let you choose development or production mode
 - ✅ Start the application with the correct settings
 
 **Choose option 1 (Development)** for the best experience with hot reloading.
 
 Wait for the startup to complete, then open [http://localhost:3000](http://localhost:3000)
+
+**🎉 That's it!** Your database is created automatically with proper schema and optional sample data.
 
 ### Daily Usage
 
@@ -207,7 +231,20 @@ cd codedeck
 - ✅ Validate your environment is still configured correctly
 - ✅ Start the web interface at http://localhost:3000
 - ✅ Connect to your attempts repository
-- ✅ Be ready to track your LeetCode solutions
+- ✅ Use your existing database (preserves all your data)
+
+### Database Management
+
+**Automatic Setup**: The database is created automatically on first run using Prisma migrations.
+
+**Sample Data**: If you chose sample data during setup, you get 3 example problems:
+- **Two Sum** (marked as solved) - Classic hash map problem
+- **Valid Parentheses** (marked as solved) - Stack data structure example  
+- **Longest Substring** (unsolved) - Sliding window technique
+
+**Your Data**: All your problems, attempts, and progress are automatically saved and persist between sessions.
+
+**Fresh Start**: Delete your database file to start completely fresh, or just delete individual sample problems through the UI.
 
 ### Stopping the Application
 
@@ -270,6 +307,12 @@ docker-compose up --build codedeck-dev
 - Make sure Docker can access your attempts repository directory
 - On macOS/Linux, the path should be under your home directory
 
+**Database Issues**:
+- Database creation is **fully automatic** - no manual setup required
+- If you encounter database problems, delete `prisma/dev.db` and restart the app
+- The startup script will recreate a fresh database with proper schema
+- Choose "Yes" for sample data if you want example problems to get started
+
 **Script Permission Issues**:
 ```bash
 # If you get "permission denied" when running the script:
@@ -277,7 +320,11 @@ chmod +x docker-start.sh
 ./docker-start.sh
 ```
 
-For detailed Docker troubleshooting, see [README-DOCKER.md](README-DOCKER.md).
+**Fresh Installation**: If you're setting up on a new machine, simply:
+1. Clone the repo
+2. Copy and configure `.env`  
+3. Run `./docker-start.sh`
+4. Everything else is automatic!
 
 ## 📖 Usage
 
